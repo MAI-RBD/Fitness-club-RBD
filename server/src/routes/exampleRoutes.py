@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify
-from ..datatables.user import User
-from ..datatables.database import db
+from datatables.user import User
+from datatables.database import db
 
 exampleBlueprint = Blueprint('exampleBlueprint', __name__)
 

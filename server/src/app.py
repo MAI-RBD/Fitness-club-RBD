@@ -2,9 +2,8 @@ import os
 from flask import Flask
 from flask_cors import CORS
 
-from .datatables.database import db
-
-from .routes.exampleRoutes import exampleBlueprint
+from datatables.database import db
+from routes.exampleRoutes import exampleBlueprint
 
 # instantiate the app
 app = Flask(__name__)
