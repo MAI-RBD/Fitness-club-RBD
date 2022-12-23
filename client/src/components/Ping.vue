@@ -11,7 +11,7 @@ export default {
   name: 'Ping',
   data() {
     return {
-      msg: '',
+      msg: 'Ping!',
     };
   },
   methods: {
