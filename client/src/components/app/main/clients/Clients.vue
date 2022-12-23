@@ -2,6 +2,7 @@
 import Button from '../../../Button.vue'
 import Table from '../../../Table.vue'
 import HDivider from '../../../HDivider.vue'
+import axios from 'axios'
 
 export default {
     components: {
@@ -50,51 +51,44 @@ export default {
                 "Время"
             ],
             tableInfo: [{
-                name: "Имя 1",
-                surname: "Фамилия 1",
-                midname: "Отчество 1",
-                date: "01.12.2022",
-                time: "15:30"
-            }, 
-            {
-                name: "Имя 2",
-                surname: "Фамилия 2",
-                midname: "Отчество 2",
-                date: "01.12.2022",
-                time: "15:45"
+                name: "...",
+                surname: "...",
+                midname: "...",
+                date: "...",
+                time: "..."
             }],
         }
     },
     methods: {
         btnStat() {
-            console.log("Stat!");
             this.showItem.stat = true;
             return null;
         },        
         btnAdd() {
-            console.log("Add!");
             this.showItem.add = true;
             return null;
         },
         btnBack() {
-            console.log("Back!");
             this.showItem.stat = false;
             this.showItem.add = false;
             this.showItem.table = false;
             return null;
         },
         btnSubmitStat() {
-            console.log("Stat!");
-            console.log("Validate!");
-            console.log("Submit!");
+            const path = 'http://localhost:5000/select1';
+            axios.get(path)
+                .then((res) => {
+                console.log(res.data)
+                this.msg = res.data;
+                })
+                .catch((error) => {
+                console.error(error);
+                });
             this.showItem.stat = false;
             this.showItem.table = true;
             return null;
         },
         btnSubmitAdd() {
-            console.log("Add!");
-            console.log("Validate!");
-            console.log("Submit!");
             this.showItem.stat = false;
             this.showItem.table = false;
             this.showItem.add = false;

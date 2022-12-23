@@ -42,7 +42,7 @@ def select7():
 def select8():
     return jsonify(db.select(8))
 
-@exampleBlueprint.route('/insert-employee', methods=['GET']) # http://127.0.0.1:5000/insert-employee?name=&surname=&patronymic=&job=
+@exampleBlueprint.route('/insert-employee', methods=['POST']) # http://127.0.0.1:5000/insert-employee?name=&surname=&patronymic=&job=
 def insert_employee():
     name = request.args.get('name')
     surname = request.args.get('surname')
@@ -54,11 +54,6 @@ def insert_employee():
 
 @exampleBlueprint.route('/get-employee-data', methods=['GET']) # http://127.0.0.1:5000/get-employee-data
 def get_employee_data():
-    name = request.args.get('name')
-    surname = request.args.get('surname')
-    patronymic = request.args.get('patronymic')
-    job_title_id = request.args.get('job')
-    
     return jsonify(db.get_employment_table())
 
 @exampleBlueprint.route('/get-timetable', methods=['GET']) # http://127.0.0.1:5000/get-timetable
@@ -66,7 +61,7 @@ def get_timetable():
     return jsonify(db.get_timetable())
 
 
-@exampleBlueprint.route('/delete-employee', methods=['GET']) # http://127.0.0.1:5000/delete-employee?id=
+@exampleBlueprint.route('/delete-employee', methods=['POST']) # http://127.0.0.1:5000/delete-employee?id=
 def delete_employee():
     id = request.args.get('id')
     db.delete_employment(id)

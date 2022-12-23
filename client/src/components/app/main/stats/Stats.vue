@@ -2,7 +2,7 @@
 import Button from '../../../Button.vue'
 import Table from '../../../Table.vue'
 import HDivider from '../../../HDivider.vue'
-
+import axios from 'axios'
 
 export default {
     components: {
@@ -21,6 +21,8 @@ export default {
                 buttonMon: "Данные по зарплате",
                 buttonClients: "Клиенты в зоне риска",
                 buttonBack: "Назад",
+                buttonDate: "Дата",
+                formStatSubmit: "Найти"
             },
             showItem: {
                 Fit: false,
@@ -32,6 +34,10 @@ export default {
                 Clients: false,
                 Back: false,
                 All: true
+            },
+            input: null,
+            out: {
+                date: null
             },
             tableHead: [
                 "Имя",
@@ -62,28 +68,122 @@ export default {
             this.showItem.All = false;
         },
         btnFitPop() {
-            this.showItem.FitPop = true;
-            this.showItem.All = false;
+            const path = 'http://localhost:5000/select3';
+            axios.get(path)
+                .then((res) => {
+                    this.input = res.data.split("|")[0].split(" ");
+                    this.showItem.FitPop = true;
+                    this.showItem.All = false;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
         btnFitUnPop() {
-            this.showItem.FitUnPop = true;
-            this.showItem.All = false;
+            const path = 'http://localhost:5000/select4';
+            axios.get(path)
+                .then((res) => {
+                    this.input = res.data.split("|")[0].split(" ");
+                    this.showItem.FitUnPop = true;
+                    this.showItem.All = false;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
         btnSecPop() {
-            this.showItem.SecPop = true;
-            this.showItem.All = false;
+            const path = 'http://localhost:5000/select5';
+            axios.get(path)
+                .then((res) => {
+                    this.input = res.data.split("|")[0];
+                    this.showItem.SecPop = true;
+                    this.showItem.All = false;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
         btnSecUnPop() {
-            this.showItem.SecUnPop = true;
-            this.showItem.All = false;
+            const path = 'http://localhost:5000/select6';
+            axios.get(path)
+                .then((res) => {
+                    this.input = res.data.split("|")[0];
+                    this.showItem.SecUnPop = true;
+                    this.showItem.All = false;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
+            
         },
         btnMon() {
-            this.showItem.Mon = true;
-            this.showItem.All = false;
+            const path = 'http://localhost:5000/select7';
+            axios.get(path)
+                .then((res) => {
+                    this.input = res.data.split("|");
+                    this.tableHead = {
+                        surname: "Фамилия",
+                        name: "Имя",
+                        midname: "Отчество",
+                        date: "Дата",
+                        time: "Время"
+                    }
+                    this.tableInfo = []
+                    for(var i = 0; i < this.input.length - 1; i++) {
+                        this.input[i] = this.input[i].trim();
+                        var tmpStr = this.input[i].split(" ");
+                        var tmpObj = {
+                            surname: tmpStr[0],
+                            name: tmpStr[1],
+                            midname: tmpStr[2],
+                            date: tmpStr[3],
+                            time: tmpStr[4]
+                        }
+                        this.tableInfo.push(tmpObj);
+                    }
+                    this.showItem.Mon = true;
+                    this.showItem.All = false;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
         btnClients() {
-            this.showItem.Clients = true;
-            this.showItem.All = false;
+            const path = 'http://localhost:5000/select8';
+            axios.get(path)
+                .then((res) => {
+                    this.input = res.data;
+
+                    this.input = res.data.split("|");
+                    this.tableHead = {
+                        surname: "Фамилия",
+                        name: "Имя",
+                        midname: "Отчество",
+                        date1: "Дата записи",
+                        time1: "Время записи",
+                        date2: "Дата окончания"
+                    }
+                    this.tableInfo = [];
+                    for(var i = 0; i < this.input.length - 1; i++) {
+                        this.input[i] = this.input[i].trim();
+                        var tmpStr = this.input[i].split(" ");
+                        var tmpObj = {
+                            surname: tmpStr[0],
+                            name: tmpStr[1],
+                            midname: tmpStr[2],
+                            date1: tmpStr[4],
+                            time2: tmpStr[5],
+                            date2: tmpStr[6]
+                        }
+                        this.tableInfo.push(tmpObj);
+                    }
+
+                    this.showItem.Clients = true;
+                    this.showItem.All = false;
+                })
+                .catch((error) => {
+                    console.error(error);
+                });
         },
         btnBack() {
             this.showItem = {
@@ -97,6 +197,10 @@ export default {
                 Back: false,
                 All: true
             };
+        },
+        btnSubmitStat() {
+            console.log("Submit form!");
+            return null;
         }
     }
 }
@@ -113,11 +217,11 @@ export default {
     <Button :title="text.buttonClients" :func="btnClients"></Button>
 </div>
 
-<div v-if="showItem.Fit">
+<div v-if="showItem.Fit" class="form-wrapper margin-3">
     <form id="fitStat" @submit.prevent="btnSubmitStat">
         <p>
-            <label for="date">{{ text.formStatDate }}</label>
-            <input id="date" v-model="stat.date" placeholder="**.**.****">
+            <label for="date">{{ text.buttonDate }}</label>
+            <input id="date" v-model="out.date" placeholder="****-**-**">
         </p>
     </form>
     <HDivider></HDivider>
@@ -125,31 +229,38 @@ export default {
         <Button class="btn-size" :title="text.buttonBack" :func="btnBack" form=""></Button>
         <Button class="btn-size" :title="text.formStatSubmit" form="fitStat"></Button>
     </div>
-    <Button :title="text.buttonBack" :func="btnBack"></Button>
 </div>
 
 <div v-if="showItem.FitPop">
+    Самый популярный тренер - {{ input[0] }} {{ input[1] }} {{ input[2] }}
+    <HDivider></HDivider>
     <Button :title="text.buttonBack" :func="btnBack"></Button>
 </div>
 
 <div v-if="showItem.FitUnPop">
+    Самый не популярный тренер - {{ input[0] }} {{ input[1] }} {{ input[2] }}
+    <HDivider></HDivider>
     <Button :title="text.buttonBack" :func="btnBack"></Button>
 </div>
 
 <div v-if="showItem.SecPop">
+    Популярное занятие - {{ input }}
+    <HDivider></HDivider>
     <Button :title="text.buttonBack" :func="btnBack"></Button>
 </div>
 
 <div v-if="showItem.SecUnPop">
+    Не популярное занятие - {{ input }}
+    <HDivider></HDivider>
     <Button :title="text.buttonBack" :func="btnBack"></Button>
 </div>
 
 <div v-if="showItem.Mon">
-    <Button :title="text.buttonBack" :func="btnBack"></Button>
+    <Table :back-func="btnBack" :update-func="btnMon" :table-head="tableHead" :table-info="tableInfo"></Table>
 </div>
 
 <div v-if="showItem.Clients">
-    <Button :title="text.buttonBack" :func="btnBack"></Button>
+    <Table :back-func="btnBack" :update-func="btnClients" :table-head="tableHead" :table-info="tableInfo"></Table>
 </div>
 
 </template>
@@ -161,6 +272,45 @@ export default {
     flex-wrap: wrap;
     justify-content: center;
     margin-top: 20%;
+}
+
+form p {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+label {
+    font-size: 20px;
+}
+
+input {
+    width:200px;
+    padding:10px;
+    margin-left: 10px;
+    border-radius: 10px;
+    border: 1px;
+    background-color: rgb(60,60,60);
+    font-size: 20px;
+    color: rgb(226, 226, 226);
+}
+
+.form-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.margin-1 {
+    margin-top: 15%;
+}
+
+.margin-2 {
+    margin-top: 20%;
+}
+
+.margin-3 {
+    margin-top: 22%;
 }
 
 </style>

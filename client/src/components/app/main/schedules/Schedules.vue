@@ -1,5 +1,4 @@
 <script>
-import Button from '../../../Button.vue'
 import Table from '../../../Table.vue'
 
 export default {
@@ -15,16 +14,10 @@ export default {
                 "Время"
             ],
             tableInfo: [{
-                name: "Какое-то название 1",
-                type: "Какой-то тип 1",
-                date: "01.12.2022",
-                time: "15:30"
-            }, 
-            {
-                name: "Какое-то название 2",
-                type: "Какой-то тип 2",
-                date: "02.12.2022",
-                time: "16:20"
+                name: "...",
+                type: "...",
+                date: "...",
+                time: "..."
             }],
         }
     },

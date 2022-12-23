@@ -21,7 +21,6 @@ db.init_database()
 db.engine_start_func()
 db.create_tables()
 
-
 CORS(app, resources={r'/*': {'origins': '*'}})
 
 app.register_blueprint(exampleBlueprint)

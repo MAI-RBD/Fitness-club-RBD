@@ -7,7 +7,7 @@ from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
 from sqlalchemy import create_engine
 
 # Устанавливаем соединение с postgres
-connection = psycopg2.connect(user="postgres", password="1234")
+connection = psycopg2.connect(user="postgres", password="1")
 connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
 # Создаем курсор для выполнения операций с базой данных
 cursor = connection.cursor()
@@ -22,7 +22,7 @@ def init_database():
 
     close_connection()
     
-    connection = psycopg2.connect(database = "fitness_club_db", user="postgres", password="1234")
+    connection = psycopg2.connect(database = "db", user="postgres", password="1")
     connection.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
     # Создаем курсор для выполнения операций с базой данных
     
@@ -168,7 +168,7 @@ def create_tables():
         ON DELETE NO ACTION
         NOT VALID""")
 
-def select(work_type):
+def select(work_type, msg='2022-12-22 18:00:00'):
     if work_type == 0:
         result = another_connection.execute("""SELECT * FROM "Должности" """)
     elif work_type == 1:
@@ -184,13 +184,17 @@ def select(work_type):
     elif work_type == 6:
         result = another_connection.execute("""SELECT Название_занятия, count as "Количество записей" FROM (SELECT Название_занятия, COUNT (Название_занятия) FROM Занятия JOIN Расписание_клиентов ON Занятия."ID_занятия" = Расписание_клиентов."ID_занятия" GROUP BY (Название_занятия)) as a WHERE count <= (SELECT MIN (count) FROM (SELECT Название_занятия, COUNT (Название_занятия) FROM Занятия JOIN Расписание_клиентов ON Занятия."ID_занятия" = Расписание_клиентов."ID_занятия" GROUP BY (Название_занятия)) as b) """)
     elif work_type == 7:
-        result = another_connection.execute("""SELECT Имя, Фамилия, Отчество, "Дата_и_ время" FROM Сотрудники JOIN Зарплаты ON Сотрудники."ID_сотрудника" = Зарплаты."ID_сотрудника" WHERE DATE_PART('month', NOW()) = DATE_PART('month', Зарплаты."Дата_и_ время") ORDER BY Сотрудники."ID_сотрудника" """)
+        result = another_connection.execute("""SELECT Имя, Фамилия, Отчество, "Дата_и_время" FROM Сотрудники JOIN Зарплаты ON Сотрудники."ID_сотрудника" = Зарплаты."ID_сотрудника" WHERE DATE_PART('month', NOW()) = DATE_PART('month', Зарплаты."Дата_и_время") ORDER BY Сотрудники."ID_сотрудника" """)
     elif work_type == 8:
-        result = another_connection.execute("""SELECT Имя, Фамилия, Отчество, "ID_абонемента", Время_начала as "Записан на:", "Дата окончания" as "Абонемент годен до:" FROM Расписание_клиентов JOIN (SELECT * FROM Абонементы JOIN Клиенты ON Абонементы."ID_владельца" = Клиенты."ID_клиента") as a ON Расписание_клиентов."ID_клиента" = a."ID_клиента" WHERE "Дата окончания" < Время_начала""")
-    
+        result = another_connection.execute("""SELECT Имя, Фамилия, Отчество, "ID_абонемента", Время_начала as "Записан на:", "Дата_окончания" as "Абонемент годен до:" FROM Расписание_клиентов JOIN (SELECT * FROM Абонементы JOIN Клиенты ON Абонементы."ID_владельца" = Клиенты."ID_клиента") as a ON Расписание_клиентов."ID_клиента" = a."ID_клиента" WHERE "Дата_окончания" < Время_начала""")
     result_str = ""
-    for val in result:
-        result_str = result_str + str(val) + " "
+    for row in result:
+        print(row)
+        for item in row:
+            print(item)
+            result_str = result_str + str(item) + " "
+        result_str = result_str + " | "
+    print(result_str)
     return result_str
 
 id = 100
@@ -203,8 +207,10 @@ def insert_employment(name, surname, patronymic, job_id):
 def get_employment_table():
     result = another_connection.execute("""SELECT * FROM "Сотрудники" """)
     result_str = ""
-    for val in result:
-        result_str = result_str + str(val) + " "
+    for row in result:
+        for item in row:
+            result_str = result_str + str(item) + " "
+        result_str = result_str + " | "
     return result_str
 
 def delete_employment(id):
@@ -228,5 +234,5 @@ def close_connection():
 
 def engine_start_func():
     global another_connection
-    engine = create_engine("postgresql+psycopg2://postgres:1234@localhost/fitness_club_db")
+    engine = create_engine("postgresql+psycopg2://postgres:1@localhost/db")
     another_connection = engine.connect()

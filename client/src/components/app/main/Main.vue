@@ -3,12 +3,14 @@ import { mapGetters } from 'vuex';
 import Schedulers from './schedules/Schedules.vue'
 import Clients from './clients/Clients.vue'
 import Stats from './stats/Stats.vue'
+import Employ from './employ/Employ.vue';
 
 export default {
     components: {
         Schedulers,
         Clients,
-        Stats
+        Stats,
+        Employ
     },
     data() {
         return {
@@ -163,9 +165,7 @@ export default {
                     PLACEHOLDER6
                 </div>
                 <Stats v-if="showContent[6]"/>
-                <div v-if="showContent[7]">
-                    PLACEHOLDER8
-                </div>
+                <Employ v-if="showContent[7]"/>
                 <div v-if="showContent[8]">
                     PLACEHOLDER9
                 </div>
